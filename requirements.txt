@@ -1,0 +1,10 @@
+sentence-transformers
+transformers
+tqdm
+scikit-learn
+prettytable
+onnx
+optimum
+onnxruntime
+cmake
+flask
