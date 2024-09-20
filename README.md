@@ -143,6 +143,8 @@ After correctly placing the embeddings and CSV files, your repository structure 
 
 ![Repository Structure](./repository_structure.png)
 
+The `./items/Merged_All_Deduplicated.csv` file is an example of a product CSV file and the `./embeddings/` directory contains the pre-computed embeddings for the products.
+
 Note that the `./save_model/` directory is not required for students, as the models are hosted by the TA.
 
 ## Usage
