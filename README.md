@@ -137,6 +137,14 @@ Make sure that the corresponding product CSV files are located in the `./items/`
 
 This ensures that the search and analysis scripts can properly load the embeddings for the correct products.
 
+## Repository Structure
+
+After correctly placing the embeddings and CSV files, your repository structure should look like this:
+
+![Repository Structure](./repository_structure.png)
+
+Note that the `./save_model/` directory is not required for students, as the models are hosted by the TA.
+
 ## Usage
 
 The main task for students is to retrieve embeddings by interacting with the API server and using the provided pre-computed embeddings for analysis. Below are examples of how students can utilize the system:
