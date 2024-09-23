@@ -27,7 +27,7 @@ if not os.path.exists(embeddings_dir):
 for file in os.listdir(embeddings_dir):
     if file.endswith('.npy'):
         embedding_file = os.path.join(embeddings_dir, file)
-        csv_file = os.path.join('./items', file.replace('.npy', '.csv'))
+        csv_file = os.path.join('./random_samples_1M', file.replace('.npy', '.csv'))
 
         # Check if the corresponding CSV file exists
         if not os.path.exists(csv_file):

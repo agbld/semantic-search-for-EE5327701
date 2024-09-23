@@ -48,7 +48,7 @@ def inference(tokenizer, model, sentences, batch_size, verbose=False):
 
     return embeddings, time_per_batch
 
-def get_semantic_model(model_id: str = './save_model/ABRSS_student_L2_onnx_QINT8'):
+def get_semantic_model(model_id: str = './save_model/semantic_model'):
     model = ORTModelForFeatureExtraction.from_pretrained(model_id, export=False)
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     return model, tokenizer

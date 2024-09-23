@@ -8,3 +8,4 @@ optimum
 onnxruntime
 cmake
 flask
+huggingface_hub
