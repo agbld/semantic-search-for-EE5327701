@@ -9,7 +9,7 @@ args = parser.parse_args()
 
 if args.model_type == "semantic_model":
     from semantic_model import get_semantic_model, inference
-    model, tokenizer = get_semantic_model(os.path.join(args.args.model_path, args.model_type))
+    model, tokenizer = get_semantic_model(os.path.join(args.model_path, args.model_type))
 elif args.model_type == "ckipbert":
     from ckipbert import get_ckipbert, inference
     model, tokenizer = get_ckipbert()
