@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import os
 import argparse
-from sklearn.metrics.pairwise import cosine_similarity
+import faiss  # New import
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
@@ -47,6 +47,22 @@ product_embeddings = np.concatenate(product_embeddings, axis=0)
 print(f'Number of products: {len(product_names)}')
 print(f'Number of pre-computed embeddings: {product_embeddings.shape[0]}')
 
+# Convert embeddings to float32
+product_embeddings = product_embeddings.astype('float32')
+
+# Normalize embeddings for cosine similarity
+faiss.normalize_L2(product_embeddings)
+
+# Build FAISS index
+embedding_dim = product_embeddings.shape[1]
+index = faiss.IndexFlatIP(embedding_dim)  # Using Inner Product as similarity measure
+index.add(product_embeddings)
+
+print(f'FAISS index built with {index.ntotal} vectors.')
+
+# Convert product names to pandas Series for easy indexing
+product_names_series = pd.Series(product_names)
+
 # Function to get embeddings from the server
 def get_embeddings(text: list, url: str = 'http://localhost:5000/api/embed') -> list:
     headers = {'Content-Type': 'application/json'}
@@ -56,22 +72,20 @@ def get_embeddings(text: list, url: str = 'http://localhost:5000/api/embed') -> 
     return response.json()
 
 # Function to search for the top k items
-def search(query, product_names, product_embeddings, top_k=5):
-    product_names_series = pd.Series(product_names)
-
+def search(query, product_names_series, index, top_k=5):
     # Get the embedding for the query via API call
-    query_embeddings = get_embeddings([query])
+    query_embedding = get_embeddings([query])[0]
+    query_embedding = np.array([query_embedding]).astype('float32')
 
-    # Convert query_embeddings to numpy array
-    query_embeddings = np.array(query_embeddings)
+    # Normalize query embedding
+    faiss.normalize_L2(query_embedding)
 
-    # Calculate cosine similarity between query and product embeddings
-    scores = cosine_similarity(query_embeddings, product_embeddings)
+    # Search using the index
+    scores, indices = index.search(query_embedding, top_k)
 
-    # Get indices of the top k most similar products
-    top_k_indices = np.argsort(-scores[0])[:top_k]
-    top_k_names = product_names_series.iloc[top_k_indices]
-    top_k_scores = scores[0][top_k_indices]
+    # Retrieve search results
+    top_k_names = product_names_series.iloc[indices[0]].values
+    top_k_scores = scores[0]
 
     return top_k_names, top_k_scores
 
@@ -82,7 +96,7 @@ while True:
         break
 
     start_time = time.time()
-    top_k_names, scores = search(query, product_names, product_embeddings)
+    top_k_names, scores = search(query, product_names_series, index)
     elapsed_time = time.time() - start_time
     print(f'Took {elapsed_time:.4f} seconds to search')
 

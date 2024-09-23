@@ -9,3 +9,4 @@ onnxruntime
 cmake
 flask
 huggingface_hub
+faiss-cpu
