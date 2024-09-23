@@ -1,13 +1,13 @@
 # Semantic Searching System for NTUST Big Data Analysis Course (EE5327701)
 
-This repository contains a system that generates embeddings for e-commerce product descriptions using both the distilled and quantized **EcomBERT** model and the **CKIP BERT** model. It is designed as a demonstration project for the **NTUST Big Data Analysis course (EE5327701)**.
+This repository contains a system that generates embeddings for e-commerce product descriptions using both the distilled and quantized **Semantic model** model and the **CKIP BERT** model. It is designed as a demonstration project for the **NTUST Big Data Analysis course (EE5327701)**.
 
 *Special thanks to William Wu (clw8998), who created the distillation and quantization model for this project. It's truly outstanding work!*
 
 ## Features
 
-- **Dual Model Support:** Provides options to use either the EcomBERT model or the CKIP BERT model for generating embeddings.
-- **Efficient Embedding Generation:** Utilizes a distilled and quantized version of EcomBERT and the optimized CKIP BERT for fast inference and reduced model size.
+- **Dual Model Support:** Provides options to use either the Semantic model or the CKIP BERT model for generating embeddings.
+- **Efficient Embedding Generation:** Utilizes a distilled and quantized version of Semantic model and the optimized CKIP BERT for fast inference and reduced model size.
 - **Batch Processing:** Handles multiple input sentences in batches, leveraging ONNX quantization for performance.
 - **API Integration:** Offers a RESTful API endpoint for generating embeddings using Flask (handled by the TA).
 - **Multilingual Support:** Capable of handling English and Chinese product descriptions.
@@ -18,13 +18,13 @@ This repository contains a system that generates embeddings for e-commerce produ
 
 - **Usage:** Students are only responsible for sending requests to the API and do **not** need to host the model API server locally.
 - **Focus:** The focus for students is to work on tasks such as retrieving embeddings for product descriptions and performing further analysis or tasks based on the embeddings provided by the API.
-- **Pre-computed Embeddings:** Students can use the pre-computed embeddings provided by the TA for both EcomBERT and CKIP BERT models.
+- **Pre-computed Embeddings:** Students can use the pre-computed embeddings provided by the TA for both Semantic model and CKIP BERT models.
 - **No Need for Model Files:** Students do not need to download or manage the model files, as the server is hosted by the TA.
 
 ### TAs
 
 - **Hosting the API Server:** TAs are responsible for hosting and maintaining the model API server that the students will interact with.
-- **Model Management:** TAs will ensure that the pre-trained EcomBERT and CKIP BERT models are available on the server and correctly set up for inference.
+- **Model Management:** TAs will ensure that the pre-trained Semantic model and CKIP BERT models are available on the server and correctly set up for inference.
 - **Providing Pre-computed Embeddings:** TAs will supply the pre-computed embeddings for both models to the students.
 
 ## Table of Contents
@@ -41,97 +41,18 @@ This repository contains a system that generates embeddings for e-commerce produ
   - [Example Usage](#example-usage)
 - [Notes](#notes)
 
-## Installation (For TAs Only)
-
-### Prerequisites
-
-- **Python 3.7+**
-- **PyTorch**
-- **ONNX Runtime**
-- **Flask**
-
-### Steps
-
-1. **Clone the Repository:**
-
-   ```bash
-   git clone https://github.com/your-username/ecombert-for-EE5327701.git
-   cd ecombert-for-EE5327701
-   ```
-
-2. **Install PyTorch:**
-
-   If PyTorch is not installed, follow the instructions on the [official website](https://pytorch.org/get-started/locally/) to install the appropriate version based on your system configuration.
-
-   For CPU-only support:
-
-   ```bash
-   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-   ```
-
-   *Note: This repository is optimized for CPU inference due to model quantization.*
-
-3. **Install Required Dependencies:**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Ensure Models Are Available:**
-
-   - **EcomBERT Model:** Place the model in `./save_model/ABRSS_student_L3_onnx_QINT8`.
-   - **CKIP BERT Model:** Place the model in `./save_model/ckiplab-bert-base-chinese`.
-
-   *Note: The models are not included in this repository.*
-
-5. **Prepare the Data:**
-
-   - Place your product CSV files in the `./items` directory.
-   - Ensure each CSV file has a `product_name` column.
-
-6. **Generate Embeddings:**
-
-   - **Note for TAs:** The pre-computed embeddings for both EcomBERT and CKIP BERT will be provided to students.
-   - To generate embeddings (if needed), run:
-
-     - For **EcomBERT**:
-
-       ```bash
-       python ecombert.py
-       ```
-
-     - For **CKIP BERT**:
-
-       ```bash
-       python ckipbert.py
-       ```
-
-     Embeddings will be saved in `./embeddings/ecombert` and `./embeddings/ckipbert` respectively.
-
-7. **Start the API Server:**
-
-   ```bash
-   # For EcomBERT
-   python server.py --model_type ecombert --model_path ./save_model/ABRSS_student_L3_onnx_QINT8 --port 5000
-
-   # For CKIP BERT
-   python server.py --model_type ckipbert --model_path ./save_model/ckiplab-bert-base-chinese --port 5000
-   ```
-
-   The server will start on the specified port (default is 5000).
-
 ## Installation (For Students)
 
 Please ensure that the received embeddings from the TA are placed in the following directories based on the model:
 
-- **For EcomBERT embeddings:** Place the `.npy` files in the `./embeddings/ecombert/` directory.
+- **For Semantic model embeddings:** Place the `.npy` files in the `./embeddings/semantic_model/` directory.
 - **For CKIP BERT embeddings:** Place the `.npy` files in the `./embeddings/ckipbert/` directory.
 
 Make sure that the corresponding product CSV files are located in the `./items/` directory. Each CSV file should have a `product_name` column, and the `.npy` embeddings should have **the same filename** (excluding the extension) as the CSV files they correspond to. For example:
 
 ```
 ./items/example_filename.csv
-./embeddings/ecombert/example_filename.npy
+./embeddings/semantic_model/example_filename.npy
 ./embeddings/ckipbert/example_filename.npy
 ``` 
 
@@ -164,8 +85,8 @@ python example_request.py
 This script demonstrates how to perform a semantic search using the pre-computed embeddings provided by the TA.
 
 ```bash
-# For EcomBERT
-python example_search.py --model_type ecombert
+# For Semantic model
+python example_search.py --model_type semantic_model
 
 # For CKIP BERT
 python example_search.py --model_type ckipbert
@@ -255,7 +176,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"text": ["Product descript
 - **For TAs:**
 
   - Make sure the API server is up and running throughout the lab sessions.
-  - Ensure both models (EcomBERT and CKIP BERT) are loaded properly if providing both options.
+  - Ensure both models (Semantic model and CKIP BERT) are loaded properly if providing both options.
   - Provide the pre-computed embeddings to the students.
   - Monitor server performance and handle any issues that arise.
 

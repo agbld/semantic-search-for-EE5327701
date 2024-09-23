@@ -8,8 +8,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("--model_type", type=str, default="ecombert", choices=["ecombert", "ckipbert"],
-                    help="Type of model to use: 'ecombert' or 'ckipbert'")
+parser.add_argument("--model_type", type=str, default="semantic_model", choices=["semantic_model", "ckipbert"],
+                    help="Type of model to use: 'semantic_model' or 'ckipbert'")
 args = parser.parse_args()
 
 # Set the embeddings directory based on model type

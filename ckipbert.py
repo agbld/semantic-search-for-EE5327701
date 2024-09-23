@@ -7,7 +7,7 @@ from tqdm.autonotebook import trange
 import pandas as pd
 import os
 
-def get_ckipbert(model_id: str = './save_model/ckiplab-bert-base-chinese'):
+def get_ckipbert(model_id: str = 'ckiplab/bert-base-chinese'):
     tokenizer = BertTokenizerFast.from_pretrained(model_id)
     model = AutoModel.from_pretrained(model_id)
     return model, tokenizer
@@ -45,12 +45,13 @@ if __name__ == "__main__":
     model, tokenizer = get_ckipbert()
     print("Model and tokenizer loaded successfully.")
 
-    csv_files = [file for file in os.listdir('./items') if file.endswith('.csv')]
-    print(f"Found {len(csv_files)} csv files under ./items")
+    csv_files = [file for file in os.listdir('./random_samples_1M') if file.endswith('.csv')]
+    print(f"Found {len(csv_files)} csv files under ./random_samples_1M")
 
     with tqdm(total=len(csv_files), desc="Inferencing embeddings") as pbar:
         for csv_file in csv_files:
-            items_df = pd.read_csv(f'./items/{csv_file}')
+            items_df = pd.read_csv(f'./random_samples_1M/{csv_file}')
+            items_df['product_name'] = items_df['product_name'].astype(str)
 
             # debug
             items_df = items_df.head(100)
@@ -58,6 +59,7 @@ if __name__ == "__main__":
             product_names = items_df['product_name'].values
             
             embeddings, _ = inference(tokenizer, model, product_names, 32, verbose=True)
+            embeddings = embeddings.astype(np.float16)
             
             if not os.path.exists('./embeddings'):
                 os.makedirs('./embeddings')
@@ -65,6 +67,6 @@ if __name__ == "__main__":
                 os.makedirs(f'./embeddings/ckipbert')
             np.save(f'./embeddings/ckipbert/{csv_file[:-4]}.npy', embeddings)
             
-            pbar.update(1)
+        pbar.update(1)
 
     print("Embeddings saved successfully.")
