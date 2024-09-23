@@ -1,6 +1,6 @@
 save_model/
 items/
-embeddings/
+# embeddings/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
