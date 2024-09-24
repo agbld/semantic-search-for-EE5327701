@@ -49,6 +49,8 @@ This repository provides a semantic search system tailored for the **NTUST Big D
 
 Use the `example_search.py` script to perform semantic search over the pre-computed embeddings.
 
+**Note:** The first time you run the script with a particular model (e.g., `semantic_model` or `ckipbert`), it will automatically download the model from Hugging Face Hub. This may take some time depending on your internet connection speed. Subsequent runs will load the model from the local cache, which will be much faster.
+
 1. **Run the `example_search.py` script:**
    ```bash
    python example_search.py --model_type semantic_model --top_k 5
@@ -66,21 +68,64 @@ Use the `example_search.py` script to perform semantic search over the pre-compu
    The script will output the top matching product descriptions along with their similarity scores.
 
 **Example:**
+
+EcomBERT Model:
 ```bash
-$ python example_search.py --model_type semantic_model --top_k 5
-Number of products: 10000
-Number of pre-computed embeddings: 10000
-FAISS index built with 10000 vectors.
+$ python example_search.py 
+Number of products: 1000000
+Number of pre-computed embeddings: 1000000
+FAISS index built with 1000000 vectors.
 Enter query (type "exit" to quit): Wireless Bluetooth Headphones
-Took 0.0023 seconds to search
-[Rank 1 | Score: 0.9123] Wireless Over-Ear Headphones with Noise Cancellation
-[Rank 2 | Score: 0.8976] Bluetooth Earbuds with Charging Case
-[Rank 3 | Score: 0.8765] Noise-Cancelling Wireless Headphones
-[Rank 4 | Score: 0.8543] Sports Bluetooth Headset
-[Rank 5 | Score: 0.8321] Wireless In-Ear Earphones
+Took 0.1734 seconds to search
+[Rank 1 | Score: 0.7561] Wireless 2矽膠耳機殼+扣, 單品, 白色（案例）
+[Rank 2 | Score: 0.7478] NS_AIR4 WIRELESS EARBUDS 藍芽耳機(黑), 1個
+[Rank 3 | Score: 0.7199] Kinyo 藍牙耳機 60 x 27 x 53mm 充電盒36g 單支耳機4g, BTE-3905, 1個
+[Rank 4 | Score: 0.7138] 登山扣修身耳機盒, 海軍, 谷歌像素芽 2
+[Rank 5 | Score: 0.7121] DEKONI AUDIO Deco -Bluetooth耳機耳朵尖端TWS泡沫提示6p, 交易平台_M, 單色
+Enter query (type "exit" to quit): 寵物玩具
+Took 0.1423 seconds to search
+[Rank 1 | Score: 0.9329] 寵物狗玩具 3入 S號, 混色, 1套
+[Rank 2 | Score: 0.9323] 動物造型寵物玩具組 3入, 隨機發貨, 1套
+[Rank 3 | Score: 0.9270] SUPER PET 寵物用玩具組, 隨機發貨（紫薯）, 1套
+[Rank 4 | Score: 0.9227] multipet 絨毛寵物玩具 L號, 1個, 隨機發貨
+[Rank 5 | Score: 0.9208] 青年商城寵物玩具耐用4件套, 混色, 1組
+Enter query (type "exit" to quit): 洗衣精
+Took 0.1622 seconds to search
+[Rank 1 | Score: 0.8855] 茶樹莊園 超濃縮洗衣精補充包 天然抗菌, 1.5kg, 4包
+[Rank 2 | Score: 0.8850] 茶樹莊園 超濃縮洗衣精 純淨消臭, 1.8kg, 5瓶
+[Rank 3 | Score: 0.8834] 茶樹莊園 茶樹洗衣精組合包, 茶樹洗衣精2000g+茶樹洗衣精補充包1500g, 1組
+[Rank 4 | Score: 0.8829] 茶樹莊園 超濃縮洗衣精 純淨消臭, 1.8kg, 3瓶
+[Rank 5 | Score: 0.8755] 茶樹莊園 超濃縮洗衣精補充包 天然抗菌, 1.5kg, 3包
 ```
 
-**Note:** The first time you run the script with a particular model (e.g., `semantic_model` or `ckipbert`), it will automatically download the model from Hugging Face Hub. This may take some time depending on your internet connection speed. Subsequent runs will load the model from the local cache, which will be much faster.
+CKIP BERT Model:
+```bash
+$ python example_search.py --model_type ckipbert
+Number of products: 1000000
+Number of pre-computed embeddings: 1000000
+FAISS index built with 1000000 vectors.
+Enter query (type "exit" to quit): Wireless Bluetooth Headphones
+Took 0.1463 seconds to search
+[Rank 1 | Score: 0.8343] Foot-On Jaguar Fine Pattern 消聲器
+[Rank 2 | Score: 0.8301] VRS Dewallet Hybrid Origin MagSafe 卡儲存支架可拆卸手機殼
+[Rank 3 | Score: 0.8263] EXPEAK Tracking Climbing 休閒智能手機袋 黃色
+[Rank 4 | Score: 0.8239] LEADCOOL ARGB記憶體散熱器 4入, RH-1 EVO
+[Rank 5 | Score: 0.8236] Rykel Allround Grip 2 磁性支架
+Enter query (type "exit" to quit): 寵物玩具
+Took 0.1451 seconds to search
+[Rank 1 | Score: 0.8563] 寵物餵食器玩具, 白色的
+[Rank 2 | Score: 0.8274] jw 寵物活動玩具四足小鳥玩具, 1個
+[Rank 3 | Score: 0.8230] 寵物睡墊, 綠色
+[Rank 4 | Score: 0.8188] 動物造型變形機器人玩具, 狼
+[Rank 5 | Score: 0.8184] 動物造型變形機器人玩具, 豹
+Enter query (type "exit" to quit): 洗衣精
+Took 0.1454 seconds to search
+[Rank 1 | Score: 0.7846] 洗髮精 直接擦鞋劑
+[Rank 2 | Score: 0.7517] 洗衣烘乾架, 1個
+[Rank 3 | Score: 0.7513] 洗衣劑, 2個, 1.7L
+[Rank 4 | Score: 0.7503] 洗衣機防塵罩, 5
+[Rank 5 | Score: 0.7491] 洗碗機用液體洗滌劑, 1L, 1個
+```
 
 ### Generating Embeddings (Optional)
 
