@@ -1,17 +1,18 @@
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--model_path", type=str, default="./save_model/ABRSS_student_L3_onnx_QINT8")
-parser.add_argument("--model_type", type=str, default="ecombert", choices=["ecombert", "ckipbert"])
+parser.add_argument("--model_path", type=str, default="./save_model")
+parser.add_argument("--model_type", type=str, default="semantic_model", choices=["semantic_model", "ckipbert"])
 parser.add_argument("--port", type=int, default=5000)
 args = parser.parse_args()
 
-if args.model_type == "ecombert":
-    from ecombert import get_ecombert, inference
-    model, tokenizer = get_ecombert(args.model_path)
+if args.model_type == "semantic_model":
+    from semantic_model import get_semantic_model, inference
+    model, tokenizer = get_semantic_model(os.path.join(args.model_path, args.model_type))
 elif args.model_type == "ckipbert":
     from ckipbert import get_ckipbert, inference
-    model, tokenizer = get_ckipbert(args.model_path)
+    model, tokenizer = get_ckipbert()
 
 from flask import Flask, request
 from concurrent.futures import ThreadPoolExecutor

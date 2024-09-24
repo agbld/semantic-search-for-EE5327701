@@ -13,7 +13,6 @@ from optimum.onnxruntime import ORTModelForFeatureExtraction
 from transformers import AutoTokenizer
 from tqdm.autonotebook import trange
 from typing import List, Union
-
 def _text_length(text: Union[List[int], List[List[int]]]):
     if isinstance(text, dict):  # {key: value} case
         return len(next(iter(text.values())))
@@ -49,7 +48,7 @@ def inference(tokenizer, model, sentences, batch_size, verbose=False):
 
     return embeddings, time_per_batch
 
-def get_ecombert(model_id: str = './save_model/ABRSS_student_L3_onnx_QINT8'):
+def get_semantic_model(model_id: str = './save_model/semantic_model'):
     model = ORTModelForFeatureExtraction.from_pretrained(model_id, export=False)
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     return model, tokenizer
@@ -60,15 +59,16 @@ if __name__ == "__main__":
     """
 
     print("Loading model and tokenizer...")
-    model, tokenizer = get_ecombert()
+    model, tokenizer = get_semantic_model()
     print("Model and tokenizer loaded successfully.")
 
-    csv_files = [file for file in os.listdir('./items') if file.endswith('.csv')]
-    print(f"Found {len(csv_files)} csv files under ./items")
+    csv_files = [file for file in os.listdir('./random_samples_1M') if file.endswith('.csv')]
+    print(f"Found {len(csv_files)} csv files under ./random_samples_1M")
 
     with tqdm(total=len(csv_files), desc="Inferencing embeddings") as pbar:
         for csv_file in csv_files:
-            items_df = pd.read_csv(f'./items/{csv_file}')
+            items_df = pd.read_csv(f'./random_samples_1M/{csv_file}')
+            items_df['product_name'] = items_df['product_name'].astype(str)
 
             # debug
             items_df = items_df.head(100)
@@ -76,13 +76,16 @@ if __name__ == "__main__":
             product_names = items_df['product_name'].values
             
             embeddings, _ = inference(tokenizer, model, product_names, 32, verbose=True)
+            embeddings = embeddings.astype(np.float16)  
             
             if not os.path.exists('./embeddings'):
                 os.makedirs('./embeddings')
-            if not os.path.exists(f'./embeddings/ecombert'):
-                os.makedirs(f'./embeddings/ecombert')
-            np.save(f'./embeddings/ecombert/{csv_file[:-4]}.npy', embeddings)
-            
-            pbar.update(1)
+            # if not os.path.exists(f'./embeddings/ecombert'):
+            #     os.makedirs(f'./embeddings/ecombert')
+            if not os.path.exists(f'./embeddings/semantic_model'):
+                os.makedirs(f'./embeddings/semantic_model')
+            np.save(f'./embeddings/semantic_model/{csv_file[:-4]}.npy', embeddings)
+        
+        pbar.update(1)
 
     print("Embeddings saved successfully.")

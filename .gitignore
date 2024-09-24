@@ -1,6 +1,7 @@
 save_model/
 items/
 embeddings/
+random_samples_1M/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
