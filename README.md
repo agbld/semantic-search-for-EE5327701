@@ -31,6 +31,9 @@ This repository provides a semantic search system tailored for the **NTUST Big D
    cd semantic-search-for-EE5327701
    ```
 
+2. **Make Sure You Have PyTorch Installed:**
+   Ensure you have PyTorch installed. If not, you can install it from the [official website](https://pytorch.org/).
+
 2. **Install Python Dependencies:**
    Ensure you have Python 3.7 or higher installed. Install the required packages using:
    ```bash

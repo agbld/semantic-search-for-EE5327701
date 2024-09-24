@@ -3,7 +3,7 @@ transformers
 tqdm
 scikit-learn
 prettytable
-onnx
+onnx==1.16.1
 optimum
 onnxruntime
 cmake
