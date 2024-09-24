@@ -13,6 +13,7 @@ from optimum.onnxruntime import ORTModelForFeatureExtraction
 from transformers import AutoTokenizer
 from tqdm.autonotebook import trange
 from typing import List, Union
+
 def _text_length(text: Union[List[int], List[List[int]]]):
     if isinstance(text, dict):  # {key: value} case
         return len(next(iter(text.values())))
@@ -48,7 +49,7 @@ def inference(tokenizer, model, sentences, batch_size, verbose=False):
 
     return embeddings, time_per_batch
 
-def get_semantic_model(model_id: str = './save_model/semantic_model'):
+def get_semantic_model(model_id:str = 'clw8998/semantic_model-for-EE5327701'):
     model = ORTModelForFeatureExtraction.from_pretrained(model_id, export=False)
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     return model, tokenizer
@@ -69,9 +70,6 @@ if __name__ == "__main__":
         for csv_file in csv_files:
             items_df = pd.read_csv(f'./random_samples_1M/{csv_file}')
             items_df['product_name'] = items_df['product_name'].astype(str)
-
-            # debug
-            items_df = items_df.head(100)
 
             product_names = items_df['product_name'].values
             

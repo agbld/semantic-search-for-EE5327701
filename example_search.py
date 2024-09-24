@@ -4,13 +4,22 @@ import numpy as np
 import pandas as pd
 import os
 import argparse
-import faiss  # New import
+import faiss
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_type", type=str, default="semantic_model", choices=["semantic_model", "ckipbert"],
                     help="Type of model to use: 'semantic_model' or 'ckipbert'")
+parser.add_argument("--top_k", type=int, default=5, help="Number of top results to return")
 args = parser.parse_args()
+
+# Prepare the model and inference function based on the model type
+if args.model_type == "semantic_model":
+    from semantic_model import get_semantic_model, inference
+    model, tokenizer = get_semantic_model()
+elif args.model_type == "ckipbert":
+    from ckipbert import get_ckipbert_model, inference
+    model, tokenizer = get_ckipbert_model()
 
 # Set the embeddings directory based on model type
 embeddings_dir = f'./embeddings/{args.model_type}/'
@@ -63,18 +72,10 @@ print(f'FAISS index built with {index.ntotal} vectors.')
 # Convert product names to pandas Series for easy indexing
 product_names_series = pd.Series(product_names)
 
-# Function to get embeddings from the server
-def get_embeddings(text: list, url: str = 'http://localhost:5000/api/embed') -> list:
-    headers = {'Content-Type': 'application/json'}
-    data = {'text': text}
-
-    response = requests.post(url, json=data, headers=headers)
-    return response.json()
-
 # Function to search for the top k items
-def search(query, product_names_series, index, top_k=5):
-    # Get the embedding for the query via API call
-    query_embedding = get_embeddings([query])[0]
+def search(query, product_names_series, index, top_k=args.top_k):
+    # Get the embedding for the query
+    query_embedding. _ = inference(tokenizer, model, [query] , 16)
     query_embedding = np.array([query_embedding]).astype('float32')
 
     # Normalize query embedding
