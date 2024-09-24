@@ -1,139 +1,162 @@
-You're right, the Installation section is redundant given the updated steps for students. Here's the revised README.md without the Installation section and with the TA parts removed:
+# Semantic Search System for NTUST Big Data Analysis Course (EE5327701)
 
----
+This repository provides a semantic search system tailored for the **NTUST Big Data Analysis course (EE5327701)**. It allows users to generate embeddings for e-commerce product descriptions using either a distilled, quantized EcomBERT model or the CKIP BERT model. The system then utilizes FAISS for efficient similarity search, enabling semantic search over large datasets.
 
-# Semantic Searching System for NTUST Big Data Analysis Course (EE5327701)
-
-This repository contains a system that generates embeddings for e-commerce product descriptions using both the distilled and quantized **Semantic model** and the **CKIP BERT** model. It is designed as a demonstration project for the **NTUST Big Data Analysis course (EE5327701)**.
-
-*Special thanks to William Wu (clw8998), who created the distillation and quantization model for this project. It's truly outstanding work!*
+*Special thanks to William Wu (clw8998) for creating the distilled and quantized models used in this project.*
 
 ## Features
 
-- **Dual Model Support:** Provides options to use either the Semantic model or the CKIP BERT model for generating embeddings.
-- **Efficient Embedding Generation:** Utilizes a distilled and quantized version of the Semantic model and the optimized CKIP BERT for fast inference and reduced model size.
-- **Batch Processing:** Handles multiple input sentences in batches, leveraging ONNX quantization for performance.
-- **API Integration:** Offers a RESTful API endpoint for generating embeddings using Flask.
-- **Multilingual Support:** Capable of handling English and Chinese product descriptions.
+- **Semantic Search:** Perform semantic search over product descriptions using pre-computed embeddings.
+- **Embedding Generation:** Optionally generate embeddings using the **EcomBERT** model (`semantic_model`) or the **CKIP BERT** model (`ckipbert`).
+- **FAISS Integration:** Build FAISS indexes for efficient similarity search over large datasets.
+- **Interactive Search:** Perform interactive semantic search queries through a command-line interface.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Performing Semantic Search](#performing-semantic-search)
+  - [Generating Embeddings (Optional)](#generating-embeddings-optional)
+- [Scripts Overview](#scripts-overview)
+  - [`example_search.py`](#example_searchpy)
+  - [`ckipbert.py`](#ckipbertpy)
+  - [`semantic_model.py`](#semantic_modelpy)
+  - [`get_dataset.py`](#get_datasetpy)
+
+## Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/agbld/semantic-search-for-EE5327701.git
+   cd semantic-search-for-EE5327701
+   ```
+
+2. **Install Python Dependencies:**
+   Ensure you have Python 3.7 or higher installed. Install the required packages using:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   **Note:** The key packages include `transformers`, `sentence-transformers`, `faiss-cpu`, `optimum`, `huggingface_hub`, `numpy`, `pandas`, and `tqdm`.
+
+3. **Download Datasets and Pre-computed Embeddings:**
+
+   **Note:** You do not need to run any script explicitly to download the datasets and embeddings. When you run the `example_search.py` script, it will automatically import and execute `get_dataset.py`, which handles downloading and setting up the necessary files.
 
 ## Usage
 
-The main tasks are to generate product data and embeddings, start the API server, and perform semantic search using the provided scripts.
+### Performing Semantic Search
 
-### Step 1: Generate Product Data and Embeddings
+Use the `example_search.py` script to perform semantic search over the pre-computed embeddings.
 
-Run the following command to obtain product names and precomputed embeddings:
+1. **Run the `example_search.py` script:**
+   ```bash
+   python example_search.py --model_type semantic_model --top_k 5
+   ```
 
+   - `--model_type`: Choose between `semantic_model` (EcomBERT) or `ckipbert` (CKIP BERT).
+   - `--top_k`: Specify the number of top results to return.
+
+2. **Interactive Search:**
+   After running the script, you can enter queries interactively:
+   ```
+   Enter query (type "exit" to quit): Your search query here
+   ```
+
+   The script will output the top matching product descriptions along with their similarity scores.
+
+**Example:**
 ```bash
-python get_dataset.py
+$ python example_search.py --model_type semantic_model --top_k 5
+Number of products: 10000
+Number of pre-computed embeddings: 10000
+FAISS index built with 10000 vectors.
+Enter query (type "exit" to quit): Wireless Bluetooth Headphones
+Took 0.0023 seconds to search
+[Rank 1 | Score: 0.9123] Wireless Over-Ear Headphones with Noise Cancellation
+[Rank 2 | Score: 0.8976] Bluetooth Earbuds with Charging Case
+[Rank 3 | Score: 0.8765] Noise-Cancelling Wireless Headphones
+[Rank 4 | Score: 0.8543] Sports Bluetooth Headset
+[Rank 5 | Score: 0.8321] Wireless In-Ear Earphones
 ```
 
-This script will:
+**Note:** The first time you run the script with a particular model (e.g., `semantic_model` or `ckipbert`), it will automatically download the model from Hugging Face Hub. This may take some time depending on your internet connection speed. Subsequent runs will load the model from the local cache, which will be much faster.
 
-- Download the product data and save it in the `./items/` directory.
-- Generate embeddings for the product descriptions using both the Semantic model and CKIP BERT model.
-- Save the embeddings in the `./embeddings/semantic_model/` and `./embeddings/ckipbert/` directories respectively.
+### Generating Embeddings (Optional)
 
-### Step 2: Start the API Server
+**Note:** Pre-computed embeddings are already provided and downloaded when you run `example_search.py`. Generating embeddings is optional and only necessary if you wish to practice or experiment with the embedding generation process.
 
-Run the following command to start the Flask API server:
+You can generate embeddings using either the EcomBERT model (`semantic_model.py`) or the CKIP BERT model (`ckipbert.py`).
 
-```bash
-python server.py
-```
+#### Using the EcomBERT Model
 
-This will start the server on `http://localhost:5000`, providing an API endpoint for generating embeddings.
+1. **Run the `semantic_model.py` script:**
+   ```bash
+   python semantic_model.py
+   ```
 
-### Step 3: Perform Semantic Search
+   This script will:
 
-Use the `example.py` script to perform semantic search.
+   - Load the distilled EcomBERT model.
+   - Process CSV files under `./random_samples_1M/`.
+   - Generate embeddings and save them as `.npy` files under `./embeddings/semantic_model/`.
 
-#### Using Semantic Model
+   **Note:** The first time you run this script, it will automatically download the EcomBERT model from Hugging Face Hub. This may take some time.
 
-```bash
-python example.py --model_type=semantic_model
-```
+#### Using the CKIP BERT Model
 
-#### Using CKIP BERT
+1. **Run the `ckipbert.py` script:**
+   ```bash
+   python ckipbert.py
+   ```
 
-```bash
-python example.py --model_type=ckipbert
-```
+   This script will:
 
-**Example Usage:**
+   - Load the CKIP BERT model.
+   - Process CSV files under `./random_samples_1M/`.
+   - Generate embeddings and save them as `.npy` files under `./embeddings/ckipbert/`.
 
-Run the script and enter a query when prompted:
+   **Note:** The first time you run this script, it will automatically download the CKIP BERT model from Hugging Face Hub. This may take some time.
 
-```bash
-Enter query: YOGiSSO 魚造型貓薄荷玩偶, 黑色, 1入
-```
+## Scripts Overview
 
-The script will output the top-k similar products:
+### `example_search.py`
 
-```
-Takes 0.1234 seconds to search
-[Rank 1 (0.95)] YOGiSSO 魚造型貓薄荷玩偶, 黑色, 1入
-[Rank 2 (0.85)] Other similar product name
-...
-```
-
-## API Documentation
-
-### Endpoint
-
-- **URL:** `http://localhost:5000/api/embed`
-- **Method:** POST
-- **Content-Type:** application/json
-
-### Request Format
-
-- **Body:**
-
-  ```json
-  {
-    "text": [
-      "Product description 1",
-      "Product description 2",
-      "..."
-    ]
-  }
+- **Purpose:** Perform semantic search using FAISS over the pre-computed embeddings.
+- **Features:**
+  - **Automatic Dataset Setup:** Imports `get_dataset.py`, which automatically downloads and sets up datasets and embeddings if they are not already present.
+  - Loads embeddings and product names.
+  - Builds a FAISS index for efficient similarity search.
+  - Provides an interactive command-line interface for entering queries.
+- **Usage:**
+  ```bash
+  python example_search.py --model_type semantic_model --top_k 5
   ```
 
-- **Parameters:**
+### `ckipbert.py`
 
-  - `text`: A list of product descriptions (strings) you want to generate embeddings for.
+- **Purpose:** Generate embeddings using the CKIP BERT model (optional).
+- **Functions:**
+  - `get_ckipbert(model_id: str, device)`: Loads the CKIP BERT tokenizer and model.
+  - `inference(tokenizer, model, sentences, device, batch_size, verbose)`: Generates embeddings for a list of sentences.
+- **Usage:** Processes CSV files and saves embeddings under `./embeddings/ckipbert/`.
 
-### Response Format
+### `semantic_model.py`
 
-- **Body:**
+- **Purpose:** Generate embeddings using the distilled, quantized EcomBERT model (optional).
+- **Functions:**
+  - `get_semantic_model(model_id: str)`: Loads the EcomBERT tokenizer and model.
+  - `inference(tokenizer, model, sentences, batch_size, verbose)`: Generates embeddings for a list of sentences.
+- **Usage:** Processes CSV files and saves embeddings under `./embeddings/semantic_model/`.
 
-  ```json
-  [
-    [0.1, 0.2, 0.3, ..., 0.128],
-    [0.5, 0.6, 0.7, ..., 0.256],
-    ...
-  ]
-  ```
+### `get_dataset.py`
 
-- **Details:**
-
-  - Returns a list of embeddings corresponding to each input text.
-  - Each embedding is a list of floating-point numbers (vector).
-
-### Example Usage
-
-Using `curl` for quick testing:
-
-```bash
-curl -X POST -H "Content-Type: application/json" -d '{"text": ["Product description 1", "Product description 2"]}' http://localhost:5000/api/embed
-```
-
-## Notes
-
-- Ensure that the server is running before attempting to use the API or perform semantic search.
-- Use the `--model_type` argument in `example.py` to switch between the Semantic model and CKIP BERT model.
-- The `get_dataset.py` script must be run first to ensure all data and embeddings are properly set up.
-- Feel free to modify and extend the scripts for your analysis.
+- **Purpose:** Download datasets and pre-computed embeddings from Hugging Face Hub.
+- **Functionality:**
+  - Checks if datasets and embeddings already exist before downloading.
+  - Downloads `semantic_model.zip`, `ckipbert.zip`, and `random_samples_1M.zip`.
+  - Unzips and organizes files into appropriate directories.
+- **Note:** You do not need to run this script explicitly. It is automatically imported and executed when running `example_search.py`.
 
 ---
 
