@@ -3,14 +3,6 @@ import os
 import shutil
 import zipfile
 
-# Function to move downloaded file to the current directory
-def move_to_current_directory(downloaded_file_path):
-    file_name = os.path.basename(downloaded_file_path)
-    destination_path = os.path.join(os.getcwd(), file_name)
-    shutil.move(downloaded_file_path, destination_path)
-    print(f"Moved {file_name} to current directory: {destination_path}")
-    return destination_path
-
 # Function to unzip the file and delete the zip file
 def unzip_and_remove(zip_file_path):
     with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
@@ -64,17 +56,14 @@ random_samples_1M_path = download_if_not_exists(
 
 # Move and unzip semantic_model.zip if it was downloaded
 if semantic_model_path:
-    semantic_model_path = move_to_current_directory(semantic_model_path)
     unzip_and_remove(semantic_model_path)
     move_to_embeddings_folder('./semantic_model')
 
 # Move and unzip ckipbert.zip if it was downloaded
 if ckipbert_path:
-    ckipbert_path = move_to_current_directory(ckipbert_path)
     unzip_and_remove(ckipbert_path)
     move_to_embeddings_folder('./ckipbert')
 
 # Unzip random_samples_1M.zip if it was downloaded
 if random_samples_1M_path:
-    random_samples_1M_path = move_to_current_directory(random_samples_1M_path)
     unzip_and_remove(random_samples_1M_path)
