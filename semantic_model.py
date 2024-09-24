@@ -24,7 +24,7 @@ def _text_length(text: Union[List[int], List[List[int]]]):
     else:
         return sum([len(t) for t in text])  # Sum of length of individual strings
     
-def inference(tokenizer, model, sentences, batch_size, verbose=False):
+def inference(tokenizer, model, sentences, batch_size=16, verbose=False):
     
     length_sorted_idx = np.argsort([-_text_length(sen) for sen in sentences])
     sentences_sorted = [sentences[idx] for idx in length_sorted_idx]

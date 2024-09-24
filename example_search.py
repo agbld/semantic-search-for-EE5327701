@@ -1,3 +1,5 @@
+import get_dataset
+
 import time
 import requests
 import numpy as np
@@ -18,8 +20,8 @@ if args.model_type == "semantic_model":
     from semantic_model import get_semantic_model, inference
     model, tokenizer = get_semantic_model()
 elif args.model_type == "ckipbert":
-    from ckipbert import get_ckipbert_model, inference
-    model, tokenizer = get_ckipbert_model()
+    from ckipbert import get_ckipbert, inference
+    model, tokenizer = get_ckipbert()
 
 # Set the embeddings directory based on model type
 embeddings_dir = f'./embeddings/{args.model_type}/'
@@ -75,8 +77,8 @@ product_names_series = pd.Series(product_names)
 # Function to search for the top k items
 def search(query, product_names_series, index, top_k=args.top_k):
     # Get the embedding for the query
-    query_embedding. _ = inference(tokenizer, model, [query] , 16)
-    query_embedding = np.array([query_embedding]).astype('float32')
+    query_embedding, _ = inference(tokenizer, model, [query] , 16)
+    query_embedding = np.array([query_embedding]).astype('float32')[0]
 
     # Normalize query embedding
     faiss.normalize_L2(query_embedding)

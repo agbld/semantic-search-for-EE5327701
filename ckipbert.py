@@ -7,12 +7,12 @@ from tqdm.autonotebook import trange
 import pandas as pd
 import os
 
-def get_ckipbert(model_id: str = 'ckiplab/bert-base-chinese', device=torch.device('cpu')):
+def get_ckipbert(model_id: str = 'ckiplab/bert-base-chinese', device='cpu'):
     tokenizer = BertTokenizerFast.from_pretrained(model_id)
     model = AutoModel.from_pretrained(model_id).to(device)
     return model, tokenizer
 
-def inference(tokenizer, model, sentences: list, device, batch_size=16, verbose=False):
+def inference(tokenizer, model, sentences, batch_size=16, verbose=False):
     length_sorted_idx = np.argsort([-len(sen) for sen in sentences])
     sentences_sorted = [sentences[idx] for idx in length_sorted_idx]
 
@@ -23,7 +23,7 @@ def inference(tokenizer, model, sentences: list, device, batch_size=16, verbose=
             start_time = time.time()
             batch = sentences_sorted[i:i+batch_size]
             # 移到 GPU
-            encoded_inputs = tokenizer(batch, padding=True, truncation=True, max_length=128, return_tensors='pt').to(device)
+            encoded_inputs = tokenizer(batch, padding=True, truncation=True, max_length=128, return_tensors='pt')
             with torch.no_grad():
                 output = model(**encoded_inputs)['last_hidden_state'].detach()
                 batch_prototypes = torch.mean(output, dim=1)
