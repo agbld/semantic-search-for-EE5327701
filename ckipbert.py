@@ -22,14 +22,11 @@ def inference(tokenizer, model, sentences, batch_size=16, verbose=False):
         for i in trange(0, len(sentences), batch_size, desc="Batches", disable=True):
             start_time = time.time()
             batch = sentences_sorted[i:i+batch_size]
-            # 移到 GPU
             encoded_inputs = tokenizer(batch, padding=True, truncation=True, max_length=128, return_tensors='pt')
             with torch.no_grad():
                 output = model(**encoded_inputs)['last_hidden_state'].detach()
                 batch_prototypes = torch.mean(output, dim=1)
-                # 正規化並保持在 GPU
                 batch_prototypes = torch.nn.functional.normalize(batch_prototypes, p=2, dim=1)
-                # 移回 CPU
                 embeddings.extend(batch_prototypes.to('cpu'))
             time_per_batch.append(time.time() - start_time)
             pbar.update(len(batch))
