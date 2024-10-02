@@ -3,6 +3,8 @@ items/
 embeddings/
 random_samples_1M/
 results/
+tmp/
+tf_idf_checkpoint.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
