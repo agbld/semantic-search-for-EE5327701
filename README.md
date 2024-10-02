@@ -1,3 +1,22 @@
+This is an example of the homework only for who notice this branch :)
+To run this, just follow the instructions below:
+1. Do exactly the same steps until Usage section in the README.md file.
+2. Copy you crawled items data (CSV files from HW1) into `./items` folder.
+3. Run following command:
+   ```bash
+   python example_search.py --model_type semantic_model --top_k 10 --homework
+   ```
+4. Run following command:
+   ```bash
+   python tf_idf.py ./random_samples_1M --homework
+   ```
+5. Run following command:
+   ```bash
+   python homework.py
+   ```
+
+---
+
 # Semantic Search System for NTUST Big Data Analysis Course (EE5327701)
 
 This repository provides a semantic search system tailored for the **NTUST Big Data Analysis course (EE5327701)**. It allows users to generate embeddings for e-commerce product descriptions using either a distilled, quantized EcomBERT model or the CKIP BERT model. The system then utilizes FAISS for efficient similarity search, enabling semantic search over large datasets.
