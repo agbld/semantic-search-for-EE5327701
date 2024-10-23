@@ -14,6 +14,8 @@ parser.add_argument("--model_type", type=str, default="semantic_model", choices=
                     help="Type of model to use: 'semantic_model' or 'ckipbert'")
 parser.add_argument("--top_k", type=int, default=5, help="Number of top results to return")
 parser.add_argument('--homework', action='store_true', help='Run in homework mode.')
+parser.add_argument('--student_id', type=str, default='M11207314', help='Student ID for homework mode.')
+parser.add_argument('--assigned_queries', type=str, default='./Mxxxxxxxx_xxx_assigned_queries.csv', help='Path to the assigned queries CSV file.')
 args = parser.parse_args()
 
 # Prepare the model and inference function based on the model type
@@ -114,9 +116,9 @@ if args.homework:
     """
 
     # Find top 100 queries
-    from get_top_100_queries import find_top_k_queries
-    print('Finding top 100 queries...')
-    queries_df = find_top_k_queries('./items', 100)
+    print('Loading assigned queries...')
+    queries_df = pd.read_csv(args.assigned_queries, usecols=['key_word'])
+    queries_df.columns = ['name']
     
     # Search for the top k items for each query
     result_dfs = []
@@ -125,17 +127,18 @@ if args.homework:
         os.makedirs(results_folder)
     for i in range(len(queries_df)):
         query = queries_df['name'][i]
+        query = query.replace('/', ' ')
         print(f'Searching for query: {query} ({i+1}/{len(queries_df)})')
 
         # For first requirement
-        top_k_names, scores = search(query, product_names_series, index, top_k=int(queries_df['count'][i]))
+        top_k_names, scores = search(query, product_names_series, index, top_k=10)
         results = {
             'top_k_names': top_k_names.tolist(),
             'scores': scores.tolist()
         }
         results_df = pd.DataFrame.from_dict(results).reset_index()
         results_df.columns = ['query', 'top_k_names', 'scores']
-        results_df.to_csv(os.path.join(results_folder, f'M11207314_semantic_{query}.csv'), index=False, encoding='utf-8')
+        results_df.to_csv(os.path.join(results_folder, f'{args.student_id}_semantic_{query}.csv'), index=False, encoding='utf-8')
 
         # For second requirement
         top_k_names, _ = search(query, product_names_series, index)
@@ -152,7 +155,7 @@ if args.homework:
     # Compress the results folder to a zip file
     print('Compressing the results folder...')
     import shutil
-    shutil.make_archive('./M11207314_results', 'zip', './results')
+    shutil.make_archive(f'./{args.student_id}_results', 'zip', './results')
 
     # Save the results to a CSV file
     result_dfs = pd.concat(result_dfs)

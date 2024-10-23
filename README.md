@@ -4,15 +4,15 @@ To run this, just follow the instructions below:
 2. Copy you crawled items data (CSV files from HW1) into `./items` folder.
 3. Run following command:
    ```bash
-   python example_search.py --model_type semantic_model --top_k 10 --homework
+   python example_search.py --model_type semantic_model --top_k 10 --homework --student_id Mxxxxxxxx --assigned_queries Mxxxxxxxx_xxx_assigned_queries.csv
    ```
 4. Run following command:
    ```bash
-   python tf_idf.py ./random_samples_1M --homework
+   python tf_idf.py ./random_samples_1M --homework --student_id Mxxxxxxxx --assigned_queries Mxxxxxxxx_xxx_assigned_queries.csv
    ```
 5. Run following command:
    ```bash
-   python homework.py
+   python homework.py --student_id Mxxxxxxxx --assigned_queries 
    ```
 
 ---

@@ -5,26 +5,27 @@ import os
 from get_top_100_queries import find_top_k_queries
 import glob
 
+import argparse
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("--student_id", type=str, default='M11207314', help='Student ID for homework mode.')
+parser.add_argument('--assigned_queries', type=str, default='./Mxxxxxxxx_xxx_assigned_queries.csv', help='Path to the assigned queries CSV file.')
+
+args = parser.parse_args()
+
 # Find top 100 queries
-print('Finding top 100 queries...')
-queries_df = find_top_k_queries('./items', 100)
+print('Loading assigned queries...')
+queries_df = pd.read_csv(args.assigned_queries, usecols=['key_word'])
+queries_df.columns = ['name']
 
 #%%
 result_dfs = []
 for i in range(len(queries_df)):
     query = queries_df['name'][i]
-    print(f'Searching for query: {query} ({i+1}/{len(queries_df)})')
-    csv_files = glob.glob(f'./items/*_{query}.csv')
-    if csv_files:
-        csv_file = csv_files[0]
-    else:
-        print(f'No CSV file found for query: {query}')
-        continue
-    df = pd.read_csv(csv_file, usecols=['product_name'], nrows=10)
     results = {
         '搜尋詞': query,
         'Rank': list(range(1, 11)),
-        'Coupang': df['product_name'].tolist(),
     }
     result_df = pd.DataFrame.from_dict(results).reset_index()
     result_dfs.append(result_df)
@@ -34,27 +35,25 @@ results_folder = './tmp'
 if not os.path.exists(results_folder):
     os.makedirs(results_folder)
 result_dfs = pd.concat(result_dfs)
-result_dfs.to_csv(f'{results_folder}/coupang.csv', index=False)
+result_dfs.to_csv(f'{results_folder}/base.csv', index=False)
 
 #%%
 # Load the CSV files
-coupang_df = pd.read_csv('./tmp/coupang.csv')
+base = pd.read_csv('./tmp/base.csv')
 tfidf_df = pd.read_csv('./tmp/tf-idf.csv')
 semantic_df = pd.read_csv('./tmp/semantic_model.csv')
 
 final_df = {
-    '搜尋詞': coupang_df['搜尋詞'].tolist(),
-    'Rank': coupang_df['Rank'].tolist(),
-    'Coupang': coupang_df['Coupang'].tolist(),
-    'Coupang_relevancy': '',
+    '搜尋詞': base['搜尋詞'].tolist(),
+    'Rank': base['Rank'].tolist(),
     'tf-idf': tfidf_df['tf-idf'].tolist(),
-    'tf-idf_relevancy': '',
+    'ner_relevancy_0': '',
     'semantic_model': semantic_df['semantic_model'].tolist(),
-    'semantic_model_relevancy': '',
+    'ner_relevancy_1': '',
 }
 
 final_df = pd.DataFrame.from_dict(final_df)
 
-final_df.to_excel(f'M11207314_搜尋比較.xlsx', index=False)
+final_df.to_excel(f'{args.student_id}_搜尋比較.xlsx', index=False)
 
 #%%

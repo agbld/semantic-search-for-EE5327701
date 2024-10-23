@@ -22,6 +22,9 @@ try:
     argparser.add_argument('-c', '--create', action='store_true', help='Create the TF-IDF models without using the saved models.')
     argparser.add_argument('--api_server', action='store_true', help='Run in API server mode.')
     argparser.add_argument('--homework', action='store_true', help='Run in homework mode.')
+    argparser.add_argument('--student_id', type=str, default='M11207314', help='Student ID for homework mode.')
+    argparser.add_argument('--assigned_queries', type=str, default='./Mxxxxxxxx_xxx_assigned_queries.csv', help='Path to the assigned queries CSV file.')
+
     args = argparser.parse_args()
     items_folder = args.items_folder
     top_k = args.top_k
@@ -197,14 +200,15 @@ elif args.homework:
     """
 
     # Find top 100 queries
-    from get_top_100_queries import find_top_k_queries
-    print('Finding top 100 queries...')
-    queries_df = find_top_k_queries('./items', 100)
+    print('Loading assigned queries...')
+    queries_df = pd.read_csv(args.assigned_queries, usecols=['key_word'])
+    queries_df.columns = ['name']
     
     # Search for the top k items for each query
     result_dfs = []
     for i in range(len(queries_df)):
         query = queries_df['name'][i]
+        query = query.replace('/', ' ')
         print(f'Searching for query: {query} ({i+1}/{len(queries_df)})')
         top_k_names, scores = search(query, top_k=10)
         results = {
