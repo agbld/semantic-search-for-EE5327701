@@ -1,7 +1,7 @@
 This is an example of the homework only for who notice this branch :)
 To run this, just follow the instructions below:
 1. Do exactly the same steps until Usage section in the README.md file.
-2. Copy you crawled items data (CSV files from HW1) into `./items` folder.
+2. Download your Mxxxxxxxx_xxx_assigned_queries.csv file and put it in the root directory of the project.
 3. Run following command:
    ```bash
    python example_search.py --model_type semantic_model --top_k 10 --homework --student_id Mxxxxxxxx --assigned_queries Mxxxxxxxx_xxx_assigned_queries.csv
